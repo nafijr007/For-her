@@ -11,9 +11,29 @@
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; }
         #start-btn { padding: 18px 35px; border-radius: 50px; border: none; background: var(--primary-pink); color: white; font-size: 1.2rem; font-weight: bold; box-shadow: 0 0 20px var(--primary-pink); cursor: pointer; }
         
-        #photo-container { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 280px; padding: 12px 12px 60px 12px; background: white; border-radius: 2px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); visibility: hidden; z-index: 5; transition: all 0.5s ease-in-out; }
+        /* ADJUSTED PHOTO CONTAINER */
+        #photo-container { 
+            position: absolute; top: 45%; left: 50%; 
+            transform: translate(-50%, -50%) scale(0); 
+            width: 85%; max-width: 300px; 
+            padding: 10px 10px 60px 10px; 
+            background: white; border-radius: 2px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6); 
+            visibility: hidden; z-index: 5; 
+            transition: all 0.5s ease-in-out; 
+        }
         #photo-container.reveal { visibility: visible; transform: translate(-50%, -50%) scale(1) rotate(-2deg); }
-        #photo-container img { width: 100%; height: 280px; object-fit: cover; }
+        
+        /* FIXED: UNCROPPED PHOTO SETTINGS */
+        #photo-container img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 400px; 
+            object-fit: contain; /* This ensures the whole photo is visible */
+            display: block;
+            background: #fafafa;
+        }
+
         #photo-caption { text-align: center; color: #444; font-size: 0.9rem; margin-top: 15px; font-style: italic; font-weight: bold; }
 
         .heart { position: absolute; font-size: 2rem; pointer-events: none; animation: floatUp 3s forwards; z-index: 15; }
@@ -43,7 +63,6 @@
         let tapCount = 0;
         const totalNeeded = 35;
 
-        // --- PASTE YOUR 7 DIRECT PHOTO LINKS HERE ---
         const photos = [
             "https://i.postimg.cc/Pr9W8wkm/IMG-20251230-WA0014.jpg", 
             "https://i.postimg.cc/ZK28ydhL/IMG-20251230-WA0017.jpg", 
@@ -54,7 +73,6 @@
             "https://i.postimg.cc/GmDkPmcM/Snapchat-669422092.jpg"
         ];
 
-        // PRELOAD IMAGES TO STOP LAG
         photos.forEach(url => { const img = new Image(); img.src = url; });
 
         const captions = [
@@ -74,7 +92,7 @@
             setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 1000);
             
             const audio = document.getElementById('bg-music');
-            audio.currentTime = 32; // <--- STARTS AT 32 SECONDS
+            audio.currentTime = 32; 
             audio.play();
         }
 
@@ -100,7 +118,6 @@
                 document.body.appendChild(b);
             }
 
-            // Photo changes every 5 taps
             if (tapCount === 5) showPhoto(0);
             if (tapCount === 10) showPhoto(1);
             if (tapCount === 15) showPhoto(2);
@@ -115,7 +132,7 @@
 
         function showPhoto(idx) {
             const c = document.getElementById('photo-container');
-            c.classList.remove('reveal'); // Reset animation
+            c.classList.remove('reveal'); 
             setTimeout(() => {
                 document.getElementById('main-photo').src = photos[idx];
                 document.getElementById('photo-caption').innerText = captions[idx];
