@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Special Surprise For You</title>
+    <style>
+        :root { --primary-pink: #ff4d6d; --bg-dark: #0b010d; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg-dark); font-family: 'Arial', sans-serif; touch-action: manipulation; }
+        
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; }
+        #start-btn { padding: 18px 35px; border-radius: 50px; border: none; background: var(--primary-pink); color: white; font-size: 1.2rem; font-weight: bold; box-shadow: 0 0 20px var(--primary-pink); cursor: pointer; }
+        
+        #photo-container { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 260px; padding: 12px 12px 50px 12px; background: white; border-radius: 2px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); visibility: hidden; z-index: 5; transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #photo-container.reveal { visibility: visible; transform: translate(-50%, -50%) scale(1) rotate(-2deg); }
+        #photo-container img { width: 100%; height: 260px; object-fit: cover; }
+        #photo-caption { text-align: center; color: #444; font-size: 0.9rem; margin-top: 15px; font-style: italic; }
+
+        .heart { position: absolute; font-size: 2rem; pointer-events: none; animation: floatUp 3s forwards; z-index: 15; }
+        .message-bubble { position: absolute; background: white; color: var(--primary-pink); padding: 10px 18px; border-radius: 25px; font-weight: bold; box-shadow: 0 8px 20px rgba(0,0,0,0.3); animation: floatUp 4s forwards; white-space: nowrap; z-index: 20; border: 2px solid var(--primary-pink); }
+        
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.5); opacity: 1; } 100% { transform: translateY(-80vh) scale(1.2) rotate(15deg); opacity: 0; } }
+        #progress-bar { position: absolute; bottom: 0; left: 0; height: 6px; background: var(--primary-pink); transition: width 0.3s; z-index: 30; }
+        #final-text { position: absolute; bottom: 8%; width: 100%; text-align: center; color: white; opacity: 0; transition: opacity 2s; font-size: 1.1rem; padding: 0 10px; box-sizing: border-box; }
+    </style>
+</head>
+<body onclick="handleInteraction(event)">
+
+    <audio id="bg-music" loop>
+        <source src="https://www.dropbox.com/scl/fi/6kdsnko4kj0ir9687sbml/Lana-Del-Rey-Radio-Lyrics-now-my-life-s-sweet-like-cinnamon.mp3?rlkey=js4clr75bolhnur2u802skieq&st=x92twffp&dl=1" type="audio/mpeg">
+    </audio>
+
+    <div id="overlay">
+        <p style="color: white; margin-bottom: 20px; font-weight: 200;">Turn up your sound...</p>
+        <button id="start-btn" onclick="startExperience()">Open Your Surprise ❤️</button>
+    </div>
+
+    <div id="progress-bar" style="width: 0%"></div>
+    <div id="photo-container"><img id="main-photo" src="" alt="Memory"><div id="photo-caption"></div></div>
+    <div id="final-text">Every tap is a reason I love you. Better days are ahead, I promise. ❤️</div>
+
+    <script>
+        let tapCount = 0;
+        const totalNeeded = 35; // End at 35 taps
+
+        // --- PASTE YOUR 7 DIRECT PHOTO LINKS BELOW ---
+        const photos = [
+            "https://i.postimg.cc/Pr9W8wkm/IMG-20251230-WA0014.jpg", 
+            "https://i.postimg.cc/ZK28ydhL/IMG-20251230-WA0017.jpg", 
+            "https://i.postimg.cc/YqZ6mWw3/Messenger-creation-F2FB58C3-AB9E-4839-BEC8-436DF6E0200B.jpg", 
+            "https://i.postimg.cc/65grGvNc/Snapchat-243421547.jpg",
+            "https://i.postimg.cc/hP6L7dqC/Snapchat-643171473.jpg",
+            "https://i.postimg.cc/wjNh5j6w/Snapchat-649116661.jpg",
+            "https://i.postimg.cc/GmDkPmcM/Snapchat-669422092.jpg"
+        ];
+
+        const captions = [
+            "A little reminder of us...",
+            "Thinking of your beautiful smile.",
+            "I'm so lucky to have you.",
+            "You make every day brighter.",
+            "My favorite memory with you.",
+            "Always by your side, no matter what.",
+            "I love you more than words can say."
+        ];
+
+        const messages = ["I'm here for you ❤️", "You are so loved", "Better days are coming", "My favorite person", "Keep smiling, baby", "Thinking of you...", "Sending a huge hug"];
+
+        function startExperience() {
+            document.getElementById('overlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 1000);
+            document.getElementById('bg-music').play();
+        }
+
+        function handleInteraction(e) {
+            if(document.getElementById('overlay').style.display !== 'none') return;
+
+            tapCount++;
+            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+            const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+            
+            document.getElementById('progress-bar').style.width = Math.min((tapCount/totalNeeded)*100, 100) + "%";
+
+            // Heart effect
+            const heart = document.createElement('div');
+            heart.className = 'heart'; heart.innerHTML = '❤️';
+            heart.style.left = x + 'px'; heart.style.top = y + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3000);
+
+            // Floating text every 4 taps
+            if (tapCount % 4 === 0 && tapCount < 30) {
+                const b = document.createElement('div');
+                b.className = 'message-bubble'; b.innerText = messages[Math.floor(Math.random()*messages.length)];
+                b.style.left = (x-60)+'px'; b.style.top = y+'px';
+                document.body.appendChild(b);
+            }
+
+            // Photo Logic (New photo every 5 taps)
+            if (tapCount === 5) showPhoto(0);
+            if (tapCount === 10) showPhoto(1);
+            if (tapCount === 15) showPhoto(2);
+            if (tapCount === 20) showPhoto(3);
+            if (tapCount === 25) showPhoto(4);
+            if (tapCount === 30) showPhoto(5);
+            if (tapCount === 35) {
+                showPhoto(6);
+                document.getElementById('final-text').style.opacity = '1';
+            }
+        }
+
+        function showPhoto(idx) {
+            const c = document.getElementById('photo-container');
+            c.classList.remove('reveal');
+            setTimeout(() => {
+                document.getElementById('main-photo').src = photos[idx];
+                document.getElementById('photo-caption').innerText = captions[idx];
+                c.classList.add('reveal');
+            }, 200);
+        }
+    </script>
+</body>
+</html>
