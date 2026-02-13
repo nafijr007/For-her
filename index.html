@@ -1,156 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>A Special Surprise For You</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমার আফিফার জন্য ❤️</title>
     <style>
-        :root { --primary-pink: #ff4d6d; --bg-dark: #0b010d; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg-dark); font-family: 'Arial', sans-serif; touch-action: manipulation; }
-        
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1.5s; }
-        #start-btn { padding: 18px 35px; border-radius: 50px; border: none; background: var(--primary-pink); color: white; font-size: 1.2rem; font-weight: bold; box-shadow: 0 0 20px var(--primary-pink); cursor: pointer; }
-        
-        #photo-container { 
-            position: absolute; top: 45%; left: 50%; 
-            transform: translate(-50%, -50%) scale(0); 
-            width: 85%; max-width: 300px; 
-            padding: 10px 10px 60px 10px; 
-            background: white; border-radius: 2px; 
-            box-shadow: 0 20px 50px rgba(255, 77, 109, 0.3); 
-            visibility: hidden; z-index: 5; 
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        #photo-container.reveal { visibility: visible; transform: translate(-50%, -50%) scale(1) rotate(-1deg); }
-        
-        #photo-container img { 
-            width: 100%; height: auto; max-height: 400px; 
-            object-fit: contain; display: block; background: #fafafa;
-        }
+        :root { --pink: #ff4d6d; --dark: #590d22; --bg: #fff0f3; }
+        body { margin: 0; background-color: var(--bg); font-family: 'SolaimanLipi', 'Georgia', serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; overflow: hidden; }
+        .hidden { display: none !important; }
 
-        #photo-caption { text-align: center; color: #444; font-size: 0.95rem; margin-top: 15px; font-style: italic; font-weight: bold; }
-
-        /* SLOWER, GLOWING HEARTS */
-        .heart { 
-            position: absolute; font-size: 2.2rem; pointer-events: none; 
-            animation: floatUp 4.5s linear forwards; /* Slowed down to 4.5s */
-            z-index: 15; text-shadow: 0 0 10px rgba(255, 77, 109, 0.8);
-        }
+        /* মেইন ফটো */
+        #proposal img { width: 250px; height: 250px; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px; border: 5px solid white; }
+        #yesBtn { background: #4CAF50; color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-size: 1.2rem; margin: 10px; transition: 0.3s ease; }
+        #noBtn { background: var(--pink); color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; margin: 10px; transition: 0.3s; position: relative; }
         
-        .message-bubble { 
-            position: absolute; background: white; color: var(--primary-pink); 
-            padding: 10px 18px; border-radius: 25px; font-weight: bold; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3); animation: floatUp 5s ease-out forwards; 
-            white-space: nowrap; z-index: 20; border: 2px solid var(--primary-pink); 
-        }
-        
-        @keyframes floatUp { 
-            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-90vh) scale(1.3) rotate(20deg); opacity: 0; } 
-        }
+        .progress-bar { width: 250px; height: 20px; border: 2px solid var(--pink); border-radius: 10px; margin: 20px auto; overflow: hidden; }
+        #fill { width: 0%; height: 100%; background: var(--pink); transition: 0.3s; }
 
-        #progress-bar { position: absolute; bottom: 0; left: 0; height: 6px; background: var(--primary-pink); transition: width 0.4s; z-index: 30; }
-        #final-text { position: absolute; bottom: 8%; width: 100%; text-align: center; color: white; opacity: 0; transition: opacity 2.5s; font-size: 1.15rem; padding: 0 10px; box-sizing: border-box; text-shadow: 0 0 15px var(--primary-pink); }
+        .envelope { width: 200px; height: 130px; background: #c9184a; position: relative; margin: 0 auto; cursor: pointer; border-radius: 0 0 5px 5px; }
+        .flap { border-left: 100px solid transparent; border-right: 100px solid transparent; border-top: 70px solid var(--pink); position: absolute; top: 0; transition: 0.6s; transform-origin: top; z-index: 2; }
+        .open .flap { transform: rotateX(180deg); }
+
+        /* স্লাইডশো ফিক্স - ছবিতে ছবির ওপর রাখা */
+        #slideshow-stage { width: 100%; max-width: 500px; margin: 0 auto; }
+        .slide-frame { width: 100%; height: 400px; position: relative; border: 12px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; background: #000; border-radius: 10px; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.5s ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .slide img { width: 100%; height: 100%; object-fit: contain; }
+        .slide.active { opacity: 1; z-index: 5; }
+        .caption { background: rgba(255,255,255,0.9); padding: 12px; position: absolute; bottom: 0; width: 100%; font-weight: bold; color: var(--dark); box-sizing: border-box; z-index: 10; }
+
+        #letter-stage { max-width: 550px; width: 90%; background: white; padding: 30px; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; max-height: 80vh; overflow-y: auto; }
+        #typing-text { white-space: pre-wrap; line-height: 1.8; color: #333; font-size: 1.1rem; }
+
+        .gift-box { font-size: 80px; cursor: pointer; display: inline-block; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+        .locket-img { width: 220px; height: 220px; border-radius: 50%; border: 8px solid gold; box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); object-fit: cover; animation: zoomIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .petals { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
     </style>
 </head>
-<body onclick="handleInteraction(event)">
+<body>
 
-    <audio id="bg-music" loop>
-        <source src="https://www.dropbox.com/scl/fi/6kdsnko4kj0ir9687sbml/Lana-Del-Rey-Radio-Lyrics-now-my-life-s-sweet-like-cinnamon.mp3?rlkey=js4clr75bolhnur2u802skieq&st=x92twffp&dl=1" type="audio/mpeg">
+    <audio id="bgMusic" loop>
+        <source src="https://files.catbox.moe/wz1wr9.mp3" type="audio/mpeg">
     </audio>
 
-    <div id="overlay">
-        <p style="color: white; margin-bottom: 20px; font-weight: 200; letter-spacing: 1px;">Turn up your sound...</p>
-        <button id="start-btn" onclick="startExperience()">Open Your Surprise ❤️</button>
+    <div class="petals" id="petalContainer"></div>
+
+    <div id="proposal">
+        <img src="https://i.postimg.cc/Y9P0D4BL/Whats-App-Image-2026-02-13-at-11-54-26-PM.jpg" alt="Main Photo">
+        <h1>আফিফা, Will you be my Valentine? ❤️</h1>
+        <div class="btn-group">
+            <button id="yesBtn">হ্যাঁ!</button>
+            <button id="noBtn">না</button>
+        </div>
     </div>
 
-    <div id="progress-bar" style="width: 0%"></div>
-    <div id="photo-container"><img id="main-photo" src="" alt="Memory"><div id="photo-caption"></div></div>
-    <div id="final-text">Every tap is a reason I love you. Better days are ahead, I promise. ❤️</div>
+    <div id="meter-stage" class="hidden">
+        <h3>আমাদের ভালোবাসার চার্জ পূর্ণ করো...</h3>
+        <div class="progress-bar"><div id="fill"></div></div>
+        <div id="heart" style="font-size: 60px; cursor: pointer;">❤️</div>
+    </div>
+
+    <div id="envelope-stage" class="hidden">
+        <h3>একটি গোপন চিঠি তোমার জন্য...</h3>
+        <div class="envelope" id="env"><div class="flap"></div></div>
+    </div>
+
+    <div id="slideshow-stage" class="hidden">
+        <div class="slide-frame">
+            <div class="slide active"><img src="https://i.postimg.cc/1XcxnTB0/Whats-App-Image-2026-02-13-at-11-43-07-PM.jpg"><div class="caption">তোমার মায়ায় আমি বন্দি ✨</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/XqcMGhLw/Whats-App-Image-2026-02-13-at-11-43-16-PM.jpg"><div class="caption">আমাদের সুন্দর স্মৃতিগুলো ❤️</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/mkNxzqjH/Whats-App-Image-2026-02-13-at-11-43-16-PM-(1).jpg"><div class="caption">সবসময় এভাবেই পাশে থেকো ☕</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/4ybC7MPm/Whats-App-Image-2026-02-13-at-11-43-25-PM.jpg"><div class="caption">তুমিই আমার দুনিয়া</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/6qLs2Sc4/Whats-App-Image-2026-02-13-at-11-43-25-PM-(1).jpg"><div class="caption">ভালোবাসি আফিফা...</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/PJzGpcyN/Whats-App-Image-2026-02-13-at-11-43-26-PM.jpg"><div class="caption">সারাজীবন এভাবেই চাই 🌸</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/0jdgM3n6/Whats-App-Image-2026-02-13-at-11-43-26-PM-(1).jpg"><div class="caption">তুমি আমার বেঁচে থাকার শক্তি 🤝</div></div>
+            <div class="slide"><img src="https://i.postimg.cc/rsC60bj6/Whats-App-Image-2026-02-13-at-11-43-26-PM-(2).jpg"><div class="caption">শুভ ভালোবাসা দিবস! 🥂</div></div>
+        </div>
+    </div>
+
+    <div id="letter-stage" class="hidden">
+        <div id="typing-text"></div>
+    </div>
+
+    <div id="ending-stage" class="hidden">
+        <div id="gift-section">
+            <div class="gift-box" id="openGift">🎁</div>
+            <h2 style="color: var(--pink);">তোমার জন্য একটি শেষ সারপ্রাইজ!</h2>
+        </div>
+        <div id="final-reveal" class="hidden">
+            <img src="https://i.postimg.cc/nLpY1Wnj/Whats-App-Image-2026-02-14-at-12-31-37-AM.jpg" class="locket-img">
+            <h2 style="color: var(--pink); margin-top: 20px;">আমাদের ভালোবাসা অমর হয়ে থাক!</h2>
+            <p style="font-size: 1.2rem;">Happy Valentine's Day, My Afifa!</p>
+            <p style="font-weight: bold;">চিরকাল তোমারই - যারিব</p>
+        </div>
+    </div>
 
     <script>
-        let tapCount = 0;
-        const totalNeeded = 35;
+        const music = document.getElementById('bgMusic');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const stages = ['proposal', 'meter-stage', 'envelope-stage', 'slideshow-stage', 'letter-stage', 'ending-stage'];
 
-        const photos = [
-            "https://i.postimg.cc/Pr9W8wkm/IMG-20251230-WA0014.jpg", 
-            "https://i.postimg.cc/ZK28ydhL/IMG-20251230-WA0017.jpg", 
-            "https://i.postimg.cc/YqZ6mWw3/Messenger-creation-F2FB58C3-AB9E-4839-BEC8-436DF6E0200B.jpg", 
-            "https://i.postimg.cc/hP6L7dqC/Snapchat-643171473.jpg",
-            "https://i.postimg.cc/wjNh5j6w/Snapchat-649116661.jpg",
-            "https://i.postimg.cc/65grGvNc/Snapchat-243421547.jpg",
-            "https://i.postimg.cc/GmDkPmcM/Snapchat-669422092.jpg"
-        ];
-
-        photos.forEach(url => { const img = new Image(); img.src = url; });
-
-        const captions = [
-            "A little reminder of us...",
-            "Thinking of your beautiful smile.",
-            "I'm so lucky to have you.",
-            "You make every day brighter.",
-            "My favorite memory with you.",
-            "Always by your side, no matter what.",
-            "I love you more than words can say."
-        ];
-
-        const messages = ["You're amazing ❤️", "I'm right here", "Better days are coming", "My favorite person", "Keep smiling, baby", "Thinking of you...", "Sending a huge hug"];
-
-        function startExperience() {
-            document.getElementById('overlay').style.opacity = '0';
-            setTimeout(() => { document.getElementById('overlay').style.display = 'none'; }, 1500);
-            
-            const audio = document.getElementById('bg-music');
-            audio.currentTime = 32; 
-            audio.play();
+        function goTo(id) {
+            stages.forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        function handleInteraction(e) {
-            if(document.getElementById('overlay').style.display !== 'none') return;
+        let noClicks = 0;
+        noBtn.onclick = () => {
+            const phrases = ["না", "একটু ভাবো!", "প্লিজ না বলো না!", "আবার ভেবে দেখো!", "হবে না, হ্যাঁ বলো!"];
+            noBtn.innerText = phrases[Math.min(++noClicks, phrases.length-1)];
+            yesBtn.style.transform = `scale(${1 + noClicks * 0.35})`;
+        };
 
-            tapCount++;
-            const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-            const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-            
-            document.getElementById('progress-bar').style.width = Math.min((tapCount/totalNeeded)*100, 100) + "%";
+        yesBtn.onclick = () => {
+            music.currentTime = 36;
+            music.play();
+            goTo('meter-stage');
+        };
 
-            // Heart effect - Glow and slow float
-            const heart = document.createElement('div');
-            heart.className = 'heart'; heart.innerHTML = '❤️';
-            heart.style.left = (x - 20) + 'px'; heart.style.top = (y - 20) + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 4500);
+        let charge = 0;
+        document.getElementById('heart').onclick = () => {
+            charge += 20;
+            document.getElementById('fill').style.width = charge + "%";
+            if(charge >= 100) setTimeout(() => goTo('envelope-stage'), 500);
+        };
 
-            if (tapCount % 4 === 0 && tapCount < 30) {
-                const b = document.createElement('div');
-                b.className = 'message-bubble'; b.innerText = messages[Math.floor(Math.random()*messages.length)];
-                b.style.left = (x-60)+'px'; b.style.top = y+'px';
-                document.body.appendChild(b);
+        document.getElementById('env').onclick = function() {
+            this.classList.add('open');
+            setTimeout(() => { goTo('slideshow-stage'); startSlideshow(); }, 1000);
+        };
+
+        function startSlideshow() {
+            let current = 0;
+            const slides = document.querySelectorAll('.slide');
+            const interval = setInterval(() => {
+                slides[current].classList.remove('active');
+                current++;
+                if(current < slides.length) { slides[current].classList.add('active'); } 
+                else { clearInterval(interval); goTo('letter-stage'); startTyping(); }
+            }, 3500);
+        }
+
+        function startTyping() {
+            const text = "প্রিয় আফিফা আমার,\n\nতুমি আমার জীবনের এমন একটি অনুভূতি যেটা আমি কোনোদিনও হারাতে পারবো না। তুমি আমার জীবনের সুখি হওয়ার কারণ। নিজেকে ভালো করার কারণ। মোট কথা তুমি আমার বেঁচে থাকার কারণ। নিজেকে শেষ করে দিতাম অনেক আগেই। কিন্তু বেঁচে থাকার কারণ তুমি আমাকে দিয়েছো। আমার জীবনের শ্রেষ্ঠ অনুভুতি তুমি আফিফা। জীবনের প্রতিটি পদে তুমি আমাকে পাবা আফিফা পরিস্থিতি যেমনই হোক। আর তোমাকে আমি চাই আমার জীবনের প্রতিটি মুহূর্তে। কখনো হয়তো বুঝাতে পারি নাই তোমাকে কতোটা ভালোবাসি। কিন্তু একটা কথা জানো? এই জীবনের সমাপ্তি ঐদিনই হবে যেই মুহূর্ত থেকে তোমাকে পাবো না। আমার জীবনের থেকে বেশি তোমাকে আমি ভালোবাসি।\n\nইতি তোমার\nযারিব\n\n(উপহারটি দেখতে এখানে ক্লিক করো)";
+            let i = 0;
+            const target = document.getElementById("typing-text");
+            function type() {
+                if (i < text.length) {
+                    target.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                    i++;
+                    setTimeout(type, 65);
+                } else {
+                    target.onclick = () => { goTo('ending-stage'); createPetals(); };
+                    target.style.cursor = "pointer";
+                }
             }
+            type();
+        }
 
-            if (tapCount === 5) showPhoto(0);
-            if (tapCount === 10) showPhoto(1);
-            if (tapCount === 15) showPhoto(2);
-            if (tapCount === 20) showPhoto(3);
-            if (tapCount === 25) showPhoto(4);
-            if (tapCount === 30) showPhoto(5);
-            if (tapCount === 35) {
-                showPhoto(6);
-                document.getElementById('final-text').style.opacity = '1';
+        document.getElementById('openGift').onclick = () => {
+            document.getElementById('gift-section').classList.add('hidden');
+            document.getElementById('final-reveal').classList.remove('hidden');
+        };
+
+        function createPetals() {
+            const container = document.getElementById('petalContainer');
+            for (let i = 0; i < 45; i++) {
+                const petal = document.createElement('div');
+                petal.innerHTML = Math.random() > 0.5 ? '🌸' : '❤️';
+                petal.style.position = 'absolute';
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.fontSize = Math.random() * 20 + 15 + 'px';
+                petal.style.animation = `fall ${Math.random() * 3 + 4}s linear infinite`;
+                petal.style.top = '-5vh';
+                container.appendChild(petal);
             }
         }
-
-        function showPhoto(idx) {
-            const c = document.getElementById('photo-container');
-            c.classList.remove('reveal'); 
-            setTimeout(() => {
-                document.getElementById('main-photo').src = photos[idx];
-                document.getElementById('photo-caption').innerText = captions[idx];
-                c.classList.add('reveal');
-            }, 100);
-        }
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }`;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
